@@ -1,0 +1,49 @@
+version: '3.1'
+
+# docker stack deploy -c docker-compose.yml redmine (or docker-compose up -d)
+
+services:
+
+  redmine:
+    image: redmine
+    restart: always
+    ports:
+      - 13000:3000
+    volumes:
+      - redmine_data:/usr/src/redmine/files
+    environment:
+      REDMINE_DB_MYSQL: mydb
+      REDMINE_DB_PASSWORD: admin
+#        Redmine usuario / senha -->  admin / admin
+#      - REDMINE_DB_USERNAME: Root user for the application database. Default: root
+#      - REDMINE_DB_PASSWORD: Root password for the database.
+#      - REDMINE_DB_MYSQL: Hostname for MySQL server. Default: mariadb
+#      - REDMINE_DB_POSTGRES: Hostname for PostgreSQL server. No defaults
+#      - REDMINE_DB_PORT_NUMBER: Port used by database server. Default: 3306
+
+  mydb:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - '3308:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: redmine
+    volumes:
+      - mydb_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 10081:8080
+    links:
+      - mydb
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+
+volumes:
+  mydb_data:
+    driver: local
+  redmine_data:
+    driver: local
+
