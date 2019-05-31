@@ -38,7 +38,7 @@ services:
     ports:
       - 10081:8080
     links:
-      - mydb
+      - mydb:db
     command: php -S 0.0.0.0:8080 -t /var/www/html
 
 volumes:
